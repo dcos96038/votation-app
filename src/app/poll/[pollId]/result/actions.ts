@@ -58,3 +58,30 @@ export const getVotationResults = actionClient
 
     return Object.values(results);
   });
+
+export const getPollQuestion = actionClient
+  .metadata({
+    actionName: "getPollQuestion",
+  })
+  .schema(
+    z.object({
+      pollId: z.string().uuid(),
+    }),
+  )
+  .action(async ({ parsedInput }) => {
+    const client = await createClient();
+
+    const poll = await client
+      .from("polls")
+      .select("question")
+      .eq("id", parsedInput.pollId)
+      .single();
+
+    if (poll.error) {
+      throw new Error("Failed to fetch poll question", {
+        cause: poll.error,
+      });
+    }
+
+    return poll.data.question;
+  });
