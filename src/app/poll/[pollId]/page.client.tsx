@@ -4,6 +4,8 @@ import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { getVisitorId } from "@/lib/fingerprint";
+
 import { PollWithOptions } from "@/types/poll.types";
 
 import { Button } from "@/components/ui/button";
@@ -38,10 +40,11 @@ export function ClientVotingPage({ poll }: { poll: PollWithOptions }) {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    execute({ options: selectedOptions, pollId: poll.id });
+    const visitorId = await getVisitorId();
+    execute({ options: selectedOptions, pollId: poll.id, visitorId });
   };
 
   return (

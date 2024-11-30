@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { actionClient } from "@/lib/safe-actions-client";
+import { ActionError, actionClient } from "@/lib/safe-actions-client";
 import { createClient } from "@/lib/supabase/server";
 
 export const getPollById = actionClient
@@ -41,6 +41,7 @@ export const vote = actionClient
     z.object({
       options: z.array(z.string().uuid()),
       pollId: z.string().uuid(),
+      visitorId: z.string(),
     }),
   )
   .action(async ({ parsedInput }) => {
@@ -49,11 +50,16 @@ export const vote = actionClient
     const voteCreationResponse = await client.from("votes").insert(
       parsedInput.options.map((optionId) => ({
         option_id: optionId,
+        visitor_id: parsedInput.visitorId,
       })),
     );
 
     if (voteCreationResponse.error) {
-      throw new Error("Failed to create vote", {
+      if (voteCreationResponse.error.code === "23505") {
+        throw new ActionError("You have already voted in this poll");
+      }
+
+      throw new ActionError("Failed to create vote", {
         cause: voteCreationResponse.error,
       });
     }
