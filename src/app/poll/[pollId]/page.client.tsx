@@ -18,12 +18,13 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { LoadingIcon } from "@/components/ui/loading-icon";
 
 import { vote } from "./actions";
 
 export function ClientVotingPage({ poll }: { poll: PollWithOptions }) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const { execute } = useAction(vote, {
+  const { execute, isExecuting } = useAction(vote, {
     onError: ({ error }) => {
       toast.error(error.serverError);
     },
@@ -74,9 +75,9 @@ export function ClientVotingPage({ poll }: { poll: PollWithOptions }) {
             <Button
               className="w-full"
               type="submit"
-              disabled={selectedOptions.length === 0}
+              disabled={selectedOptions.length === 0 || isExecuting}
             >
-              Submit Votes
+              Submit Votes {isExecuting && <LoadingIcon />}
             </Button>
           </CardFooter>
         </form>

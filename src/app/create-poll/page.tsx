@@ -15,13 +15,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingIcon } from "@/components/ui/loading-icon";
 
 import { createPoll } from "./actions";
 
 export default function CreatePollPage() {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(["", ""]);
-  const { execute } = useAction(createPoll, {
+  const { execute, isExecuting } = useAction(createPoll, {
     onSuccess: () => {
       toast.success("Poll created successfully!");
     },
@@ -108,8 +109,8 @@ export default function CreatePollPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full" type="submit">
-              Create Poll
+            <Button disabled={isExecuting} className="w-full" type="submit">
+              Create Poll {isExecuting && <LoadingIcon />}
             </Button>
           </CardFooter>
         </form>
