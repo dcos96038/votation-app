@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Link from "next/link";
 
+import { CONSTANTS } from "@/lib/constants";
+
+// import { Button } from "@/components/ui/button";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -29,7 +33,23 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} dark antialiased`}
       >
-        {children}
+        <div className="flex min-h-screen flex-col bg-background">
+          <header className="container mx-auto px-4 py-6">
+            <nav className="flex items-center justify-between">
+              <Link href="/" className="text-2xl font-bold">
+                {CONSTANTS.APP_NAME}
+              </Link>
+              {/* <Button variant="outline" asChild>
+                <Link href="/login">Login</Link>
+              </Button> */}
+            </nav>
+          </header>
+          {children}
+          <footer className="text-muted-foreground container mx-auto px-4 py-6 text-center text-sm">
+            © {new Date().getFullYear()} {CONSTANTS.APP_NAME}. All rights
+            reserved.
+          </footer>
+        </div>
       </body>
     </html>
   );
