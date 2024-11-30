@@ -20,7 +20,11 @@ export const getPollById = actionClient
 
     const pollResponse = await client
       .from("polls")
-      .select("*, options(*)")
+      .select(
+        `*, options(
+        *, votes(*)
+        )`,
+      )
       .eq("id", parsedInput.id)
       .single();
 
