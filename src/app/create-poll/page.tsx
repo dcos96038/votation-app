@@ -1,7 +1,9 @@
 "use client";
 
 import { PlusCircle, Trash2 } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +16,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { createPoll } from "./actions";
+
 export default function CreatePollPage() {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState(["", ""]);
+  const { execute } = useAction(createPoll, {
+    onSuccess: () => {
+      toast.success("Poll created successfully!");
+    },
+    onError: (error) => {
+      toast.error(error.error.serverError);
+    },
+  });
 
   const handleAddOption = () => {
     setOptions([...options, ""]);
@@ -34,9 +46,11 @@ export default function CreatePollPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the poll data to your backend
-    console.log("Submitted poll:", { question, options });
-    // You could then redirect to the newly created poll or show a success message
+
+    execute({
+      question,
+      options: options.filter(Boolean),
+    });
   };
 
   return (

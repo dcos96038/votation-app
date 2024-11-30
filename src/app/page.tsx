@@ -11,7 +11,7 @@ export default function LandingPage() {
       <h2 className="mb-4 text-4xl font-bold tracking-tight">
         Simplify Group Decisions
       </h2>
-      <p className="text-muted-foreground mb-8 max-w-[600px] text-lg">
+      <p className="mb-8 max-w-[600px] text-lg text-muted-foreground">
         Create polls, vote, and get results in real-time. Perfect for any group
         decision.
       </p>

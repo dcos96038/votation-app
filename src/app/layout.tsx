@@ -4,6 +4,8 @@ import Link from "next/link";
 
 import { CONSTANTS } from "@/lib/constants";
 
+import { Toaster } from "@/components/ui/sonner";
+
 // import { Button } from "@/components/ui/button";
 import "./globals.css";
 
@@ -45,11 +47,12 @@ export default function RootLayout({
             </nav>
           </header>
           {children}
-          <footer className="text-muted-foreground container mx-auto px-4 py-6 text-center text-sm">
+          <footer className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
             © {new Date().getFullYear()} {CONSTANTS.APP_NAME}. All rights
             reserved.
           </footer>
         </div>
+        <Toaster richColors duration={2000} />
       </body>
     </html>
   );
