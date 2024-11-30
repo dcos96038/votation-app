@@ -1,0 +1,21 @@
+{
+  "trailingComma": "all",
+  "printWidth": 80,
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "tailwindFunctions": ["cn"],
+  "tailwindConfig": "./tailwind.config.ts",
+  "importOrder": [
+    "^@/lib/(.*)$",
+    "^@/types/(.*)$",
+    "^@/db/(.*)$",
+    "^@/auth/(.*)$",
+    "^@/components/(.*)$",
+    "^@/hooks/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
+}
