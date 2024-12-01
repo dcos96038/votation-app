@@ -100,8 +100,9 @@ export const getTotalVotes = actionClient
 
     const votes = await client
       .from("votes")
-      .select("visitor_id, options(*)")
-      .eq("options.poll_id", parsedInput.pollId);
+      .select(`visitor_id, option_id(*)`)
+      .not("option_id", "is", null)
+      .eq("option_id.poll_id", parsedInput.pollId);
 
     if (votes.error) {
       throw new Error("Failed to fetch total votes", {
