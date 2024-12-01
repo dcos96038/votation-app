@@ -85,3 +85,36 @@ export const getPollQuestion = actionClient
 
     return poll.data.question;
   });
+
+export const getTotalVotes = actionClient
+  .metadata({
+    actionName: "getTotalVotes",
+  })
+  .schema(
+    z.object({
+      pollId: z.string().uuid(),
+    }),
+  )
+  .action(async ({ parsedInput }) => {
+    const client = await createClient();
+
+    const votes = await client
+      .from("votes")
+      .select("visitor_id, options(*)")
+      .eq("options.poll_id", parsedInput.pollId);
+
+    if (votes.error) {
+      throw new Error("Failed to fetch total votes", {
+        cause: votes.error,
+      });
+    }
+
+    const uniqueVotes = new Map();
+    votes.data.forEach(({ visitor_id }) => {
+      if (!uniqueVotes.has(visitor_id)) {
+        uniqueVotes.set(visitor_id, true);
+      }
+    });
+
+    return uniqueVotes.size;
+  });

@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { getPollQuestion, getVotationResults } from "./actions";
+import { getPollQuestion, getTotalVotes, getVotationResults } from "./actions";
 import { Results } from "./results";
 
 export default async function ClientResultPage({
@@ -14,9 +14,10 @@ export default async function ClientResultPage({
     throw new Error("Poll ID is required");
   }
 
-  const [question, votes] = await Promise.all([
+  const [question, votes, totalVotes] = await Promise.all([
     getPollQuestion({ pollId }),
     getVotationResults({ pollId }),
+    getTotalVotes({ pollId }),
   ]);
 
   if (!votes?.data) {
@@ -38,6 +39,7 @@ export default async function ClientResultPage({
           question={question?.data || ""}
           votes={votes.data}
           pollId={pollId}
+          totalVotes={totalVotes?.data || 0}
         />
       </Card>
     </div>

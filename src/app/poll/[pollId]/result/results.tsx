@@ -1,30 +1,33 @@
 "use client";
 
 import { useAction } from "next-safe-action/hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
 import { CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-import { getVotationResults } from "./actions";
+import { getTotalVotes, getVotationResults } from "./actions";
 
 interface ResultsProps {
   question: string;
   votes: { count: number; optionText: string }[];
   pollId: string;
+  totalVotes: number;
 }
 
 export const Results: React.FC<ResultsProps> = ({
   question,
   votes,
   pollId,
+  totalVotes,
 }) => {
   const client = createClient();
 
+  const [currentTotalVotes, setCurrentTotalVotes] = useState(totalVotes);
   const [currentVotes, setCurrentVotes] = useState(votes);
-  const { execute } = useAction(getVotationResults, {
+  const { execute: executeGetVotationResults } = useAction(getVotationResults, {
     onSuccess: ({ data }) => {
       if (data) {
         setCurrentVotes(data);
@@ -32,13 +35,16 @@ export const Results: React.FC<ResultsProps> = ({
     },
   });
 
-  const totalVotes = useMemo(
-    () => currentVotes.reduce((sum, { count }) => sum + count, 0),
-    [currentVotes],
-  );
+  const { execute: executeGetTotalVotes } = useAction(getTotalVotes, {
+    onSuccess: ({ data }) => {
+      if (data) {
+        setCurrentTotalVotes(data);
+      }
+    },
+  });
 
   const getPercentage = (count: number) => {
-    return Number(((count / totalVotes) * 100).toFixed(2));
+    return Number(((count / currentTotalVotes) * 100).toFixed(2));
   };
 
   useEffect(() => {
@@ -48,7 +54,8 @@ export const Results: React.FC<ResultsProps> = ({
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "votes" },
         () => {
-          execute({ pollId });
+          executeGetVotationResults({ pollId });
+          executeGetTotalVotes({ pollId });
         },
       )
       .subscribe();
@@ -56,7 +63,7 @@ export const Results: React.FC<ResultsProps> = ({
     return () => {
       client.removeChannel(channel);
     };
-  }, [client, execute, pollId]);
+  }, [client, executeGetTotalVotes, executeGetVotationResults, pollId]);
 
   return (
     <CardContent>
@@ -73,7 +80,7 @@ export const Results: React.FC<ResultsProps> = ({
         </div>
       ))}
       <p className="mt-4 text-center text-sm text-muted-foreground">
-        Total votes: {totalVotes}
+        Total votes: {currentTotalVotes}
       </p>
     </CardContent>
   );
