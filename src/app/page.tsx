@@ -12,8 +12,7 @@ export default function LandingPage() {
         Simplify Group Decisions
       </h2>
       <p className="mb-8 max-w-[600px] text-lg text-muted-foreground">
-        Create polls, vote, and get results in real-time. Perfect for any group
-        decision.
+        Create polls, vote, and get results in real-time.
       </p>
       <Button size="lg" className="mb-16" asChild>
         <Link href="/create-poll">Start Voting</Link>
